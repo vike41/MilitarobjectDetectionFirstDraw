@@ -1,0 +1,4 @@
+﻿  main.cpp
+C:\Users\Keks\source\repos\OpenCVTutorialFPV\OpenCVTutorialFPV\main.cpp(34,20): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Keks\source\repos\OpenCVTutorialFPV\OpenCVTutorialFPV\main.cpp(35,21): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+  OpenCVTutorialFPV.vcxproj -> C:\Users\Keks\source\repos\OpenCVTutorialFPV\x64\Debug\OpenCVTutorialFPV.exe
