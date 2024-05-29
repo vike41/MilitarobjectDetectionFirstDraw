@@ -5,36 +5,13 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>  
-#include <opencv2/tracking.hpp>  // Include the tracking module
+//#include <opencv2/objdetect.hpp> 
 
 #include <iostream>
 #include <string>
 
 using namespace cv;
 using namespace std;
-
-// Global variables to store the coordinates of the ROI
-Rect2d roi;
-bool isSelectingROI = false;
-bool roiSelected = false;
-
-// Mouse callback function
-void mouseHandler(int event, int x, int y, int, void*) {
-    static Point topLeft;
-    if (event == EVENT_LBUTTONDOWN) {
-        if (!isSelectingROI) {
-            topLeft = Point(x, y);
-            isSelectingROI = true;
-            roiSelected = false;
-        }
-        else {
-            Point bottomRight = Point(x, y);
-            roi = Rect2d(topLeft, bottomRight);
-            isSelectingROI = false;
-            roiSelected = true;
-        }
-    }
-}
 
 int main(int argc, char** argv) {
 
@@ -48,6 +25,14 @@ int main(int argc, char** argv) {
         cerr << "Error when reading file" << endl;
         return -1;
     }
+    /*
+    //Load car cascade classifier
+    CascadeClassifier car_cascade;
+    if (!car_cascade.load("harrcascade_car.xml")) {
+        cerr << "Error loading car cascade file " << endl;
+        return -1;
+    }
+    */
 
     // Get Video Resolution
     int frameWidth = video_file.get(CAP_PROP_FRAME_WIDTH);
@@ -55,48 +40,46 @@ int main(int argc, char** argv) {
 
     cout << "File opened successfully" << endl;
 
-    Mat frame;
-    namedWindow("Video", 1);
-    setMouseCallback("Video", mouseHandler);
+    Mat frame, gray_frame, blurred_frame, dilated_frame, morph_frame, edge_frame;
+    namedWindow("w", 1);
 
-    Ptr<Tracker> tracker;
-    bool isTracking = false;
-
-    for (;;) {
+    for (;;)
+    {
         video_file >> frame;
         if (frame.empty()) {
             cout << "End of video or error reading frame" << endl;
             break;
         }
 
-        // Select ROI
-        if (roiSelected && !isTracking) {
-            tracker = TrackerCSRT::create();
-            tracker->init(frame, roi);
-            isTracking = true;
-        }
 
-        // Update the tracking result
-        if (isTracking) {
-            bool ok = tracker->update(frame, roi);
-            if (ok) {
-                // Tracking success: Draw the tracked object
-                rectangle(frame, roi, Scalar(255, 0, 0), 2, 1);
-            }
-            else {
-                // Tracking failure: Show message
-                putText(frame, "Tracking failure detected", Point(100, 80), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0, 0, 255), 2);
-                isTracking = false;
-            }
-        }
+        // Convert frame to grayscale
+        cvtColor(frame, gray_frame, COLOR_BGR2GRAY);
 
-        // Draw the ROI selection rectangle
-        if (isSelectingROI) {
-            rectangle(frame, roi, Scalar(0, 255, 0), 2);
-        }
+        // Apply Gaussian blur to the grayscale frame
+        GaussianBlur(gray_frame, blurred_frame, Size(15, 15), 1);
 
-        // Display the frame
-        imshow("Video", frame);
+        // Apply Dilate
+        Mat element_dilate = getStructuringElement(MORPH_RECT, Size(5, 5));
+        dilate(blurred_frame, dilated_frame, element_dilate);
+
+        //Apply morphological closing 
+        morphologyEx(dilated_frame, morph_frame, MORPH_CLOSE, element_dilate);
+
+        // TODO issue with loading 
+        // Detect cars
+        //vector<Rect> cars;
+        //car_cascade.detectMultiScale(morph_frame, cars, 1.1, 2, 0 | CASCADE_SCALE_IMAGE, Size(30, 30));
+
+        // Draw rectangles around detected cars
+        //for (size_t i = 0; i < cars.size(); i++) {
+        //    rectangle(frame, cars[i], Scalar(255, 0, 0), 2, 8, 0);
+        //}
+
+        // Display the frame with detected cars
+
+        Canny(morph_frame, edge_frame, 50, 150);
+
+        imshow("w", edge_frame);
         if (waitKey(20) >= 0) break; // waits to display frame and breaks if a key is pressed
     }
 

@@ -132,6 +132,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Histogram.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="objectDetection.cpp" />
     <ClCompile Include="OpenImage.cpp" />
