@@ -1,8 +1,8 @@
-/*
+
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
-#include <opencv2/videoio.hpp> // Include for VideoCapture
+#include <opencv2/videoio.hpp> 
 
 #include <iostream>
 #include <string>
@@ -11,6 +11,7 @@ using namespace cv;
 using namespace std;
 
 class VideoPlayer {
+
 public:
     VideoPlayer(const string& videoPath) : videoPath(videoPath) {}
 
@@ -59,7 +60,7 @@ private:
     int frameHeight;
 };
 
-
+/*
 int main(int argc, char** argv) {
     string videoPath = "D:\\Video\\OpenCV_Refs\\colona_ref.mp4";
     VideoPlayer player(videoPath);

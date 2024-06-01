@@ -1,4 +1,4 @@
-/*
+
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
@@ -7,6 +7,7 @@
 
 using namespace cv;
 using namespace std;
+
 
 class ReadImage {
 public:
@@ -30,10 +31,12 @@ private:
     string imagePath;
 };
 
-int main() {
+/*
+  int main() {
     string imagePath = "C:/Users/Keks/Desktop/IMG_0590.jpg";
     ReadImage reader(imagePath);
     reader.displayImage();
     return 0;
 }
 */
+
